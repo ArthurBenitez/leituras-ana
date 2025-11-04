@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BiblioFile — Meu Diário de Leitura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      background: #fafafa;
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 15px 40px;
+    }
+
+    header h1 {
+      display: flex;
+      align-items: center;
+      font-size: 20px;
+      gap: 8px;
+    }
+
+    header nav a {
+      margin: 0 12px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .container {
+      display: flex;
+      padding: 40px;
+      gap: 40px;
+    }
+
+    .perfil {
+      width: 250px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .perfil h3 { margin-bottom: 5px; }
+    .perfil .stats { display: flex; justify-content: space-between; margin-top: 10px; }
+
+    .filtros {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .main {
+      flex: 1;
+    }
+
+    .form-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .form-box input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      background: black;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn.cancelar {
+      background: #ccc;
+      color: #333;
+    }
+
+    .livros {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .livro {
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .livro img {
+      width: 100%;
+      height: 180px;
+      background: #eee;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 BiblioFile</h1>
+    <nav>
+      <a href="#">Dashboard</a>
+      <a href="#">Meus Livros</a>
+      <a href="#">Comunidade</a>
+      <a href="#">Recomendações</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="perfil">
+      <h3>Maria Silva</h3>
+      <p>Leitora ávida</p>
+      <div class="stats">
+        <div><strong>47</strong><br>Livros</div>
+        <div><strong>4.2</strong><br>Média</div>
+      </div>
+
+      <div class="filtros">
+        <h4>Filtros</h4>
+        <label>Gênero</label>
+        <select id="filtroGenero">
+          <option>Todos os gêneros</option>
+        </select>
+
+        <label>Nota</label>
+        <select id="filtroNota">
+          <option>Todas as notas</option>
+        </select>
+
+        <button class="btn" id="btnFiltros">Aplicar Filtros</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <h2>Meu Diário de Leitura</h2>
+      <div class="form-box">
+        <h3>Registre sua Leitura</h3>
+        <input type="text" id="titulo" placeholder="Título do Livro" />
+        <input type="text" id="autor" placeholder="Autor" />
+        <select id="genero">
+          <option>Selecione o gênero</option>
+          <option>Fantasia</option>
+          <option>Romance</option>
+          <option>Ficção Científica</option>
+        </select>
+        <input type="number" id="paginas" placeholder="Total de Páginas" />
+        <input type="number" id="tempo" placeholder="Tempo de Leitura (horas)" />
+        <select id="nota">
+          <option>Selecione uma nota</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+        <textarea id="resenha" placeholder="Compartilhe sua opinião sobre o livro..."></textarea>
+
+        <div class="form-buttons">
+          <button class="btn cancelar">Cancelar</button>
+          <button class="btn" id="registrar">Registrar Leitura</button>
+        </div>
+      </div>
+
+      <div class="livros" id="listaLivros"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registrar').addEventListener('click', async () => {
+      const livro = {
+        titulo: document.getElementById('titulo').value,
+        autor: document.getElementById('autor').value,
+        genero: document.getElementById('genero').value,
+        paginas: document.getElementById('paginas').value,
+        tempo: document.getElementById('tempo').value,
+        nota: document.getElementById('nota').value,
+        resenha: document.getElementById('resenha').value
+      };
+
+      const res = await fetch('http://localhost:3000/livros', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(livro)
+      });
+
+      if (res.ok) alert('Leitura registrada com sucesso!');
+    });
+  </script>
+</body>
+</html>
