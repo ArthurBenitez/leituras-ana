@@ -28,7 +28,7 @@ app.get('/livros', (req, res) => {
   });
 });
 
-// Rota para registrar os livros
+// Rota para registrar leitura
 app.post('/livros', (req, res) => {
   const { titulo, autor, genero, paginas, tempo, nota, resenha } = req.body;
 
@@ -42,4 +42,4 @@ app.post('/livros', (req, res) => {
   );
 });
 
-app.listen(3000, () => console.log('Servidor rodando em http://localhost:3000 mas caso der erro, use o arquivo index.html (Open with Live Server) - aviso para a professora Ana'));
+app.listen(3000, () => console.log('Servidor rodando em http://localhost:3000 mas caso der erro, use o arquivo index.html (Open with Live Server) - aviso para a professora Ana. Deve primeiro dar app.js e depois index.html. É o único modo que está funcionando'));
