@@ -18,6 +18,7 @@
     </nav>
   </header>
 
+
   <div class="container">
     <div class="perfil">
       <h3>Maria Silva</h3>
@@ -69,11 +70,14 @@
         </div>
       </div>
 
-      <div class="livros" id="listaLivros"></div>
+      <div class="livros" id="listaLivros">
+        <!-- Livros registrados aparecerão aqui -->
+
+      </div>
     </div>
   </div>
 
-  <script> <!-- Aqui ainda não entendo completamente de promise, então foi preciso colocar no HTML e pedir ajuda pra IA -->
+  <script>
     document.getElementById('registrar').addEventListener('click', async () => {
       const livro = {
         titulo: document.getElementById('titulo').value,
@@ -93,6 +97,36 @@
 
       if (res.ok) alert('Leitura registrada com sucesso!');
     });
+
+    // carregar livros registrados na div "listaLivros"
+
+    async function carregarLivros() {
+      const res = await fetch('http://localhost:3000/livros');
+      const livros = await res.json();
+      const listaLivros = document.getElementById('listaLivros');
+      listaLivros.innerHTML = '';
+
+      livros.forEach(livro => {
+        const livroDiv = document.createElement('div');
+        livroDiv.classList.add('livro');
+        livroDiv.innerHTML = `
+          <h3>${livro.titulo}</h3>
+          <p><strong>Autor:</strong> ${livro.autor}</p>
+          <p><strong>Gênero:</strong> ${livro.genero}</p>
+          <p><strong>Páginas:</strong> ${livro.paginas}</p>
+          <p><strong>Tempo de Leitura:</strong> ${livro.tempo} horas</p>
+          <p><strong>Nota:</strong> ${livro.nota}</p>
+          <p><strong>Resenha:</strong> ${livro.resenha}</p>
+        `;
+        listaLivros.appendChild(livroDiv);
+      });
+    }
+    carregarLivros();
+
+
+
+
+
   </script>
 </body>
 </html>
